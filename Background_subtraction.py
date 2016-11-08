@@ -16,7 +16,6 @@ def findSignificantContours (img, edge_image):
     # image, 
 
     contours, heirarchy = cv2.findContours(edge_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
     if heirarchy is None:
         return None
 
@@ -28,19 +27,19 @@ def findSignificantContours (img, edge_image):
         if tupl[3] == -1:
             tupl = np.insert(tupl, 0, [i])
             level1.append(tupl)
-
     # From among them, find the contours with large surface area.
     significant = []
     # tooSmall = edge_image.size * 0.00005 # If contour isn't covering 5% of total area of image then it probably is too small
     # tooSmall = edge_image.size * 1 / 100 # If contour isn't covering 5% of total area of image then it probably is too small
     tooSmall = 0.0005 * edge_image.size
+    tooBig = 0.001*edge_image.size
     # tooSmall = 0.0
     for tupl in level1:
         contour = contours[tupl[0]];
         (x,y),radius = cv2.minEnclosingCircle(contour)
         area = math.pi*radius*radius
         # area = cv2.contourArea(contour)
-        if area > tooSmall:
+        if area > tooSmall and area< tooBig :
             significant.append([contour, area])
 
             # Draw the contour on the original image
